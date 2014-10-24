@@ -2,53 +2,44 @@ package com.shengsiyuan.bean;
 
 import java.util.Date;
 
-public class Person
-{
+public class Person {
 	private String username;
-	
+
 	private String password;
-	
+
 	private int age;
-	
+
 	private Date date;
 
-	public String getUsername()
-	{
+	public String getUsername() {
 		return username;
 	}
 
-	public void setUsername(String username)
-	{
+	public void setUsername(String username) {
 		this.username = username;
 	}
 
-	public String getPassword()
-	{
+	public String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password)
-	{
+	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public int getAge()
-	{
+	public int getAge() {
 		return age;
 	}
 
-	public void setAge(int age)
-	{
+	public void setAge(int age) {
 		this.age = age;
 	}
 
-	public Date getDate()
-	{
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Date date)
-	{
+	public void setDate(Date date) {
 		this.date = date;
 	}
 }
