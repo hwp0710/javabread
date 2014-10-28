@@ -23,27 +23,24 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	
 	<script type="text/javascript">
 	
-	$(function()
-	{
-		$("#button1").click(function()
-		{
+	$(function(){
+		$("#button1").click(function(){
 			$.post("getJsonAction2.action",{name: $("#name").val()}, 
-				function(returnedData, status)
-			{
-				var people = returnedData;
-				
-				var id = people.id;
-				var name = people.name;
-				var age = people.myAge;
-				var address = people.address;
+				function(returnedData, status){
+					var people = returnedData;
 					
-				var html = "<table width='60%' border='1' align='center'><tr><th>id</th><th>name</th><th>age</th><th>address</th><tr align='center'><td>" + id + "</td><td>" + name + "</td><td>" + age + "</td><td>" + address + "</td></tr></table>";
-		
-				$("#theBody table:eq(0)").remove();
+					var id = people.id;
+					var name = people.name;
+					var age = people.myAge;
+					var address = people.address;
+						
+					var html = "<table width='60%' border='1' align='center'><tr><th>id</th><th>name</th><th>age</th><th>address</th><tr align='center'><td>" + id + "</td><td>" + name + "</td><td>" + age + "</td><td>" + address + "</td></tr></table>";
 			
-				$("#theBody").append(html);
+					$("#theBody table:eq(0)").remove();
 				
-			});			
+					$("#theBody").append(html);
+					
+				});
 		});
 	});
 	
