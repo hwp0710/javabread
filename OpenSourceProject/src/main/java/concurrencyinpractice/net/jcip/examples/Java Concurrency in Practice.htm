@@ -1,0 +1,644 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Java Concurrency in Practice</TITLE>
+<META content="text/html; charset=utf-8" http-equiv=Content-Type><LINK 
+rel=stylesheet type=text/css 
+href="http://www.javaconcurrencyinpractice.com/jcip.css">
+<META name="Microsoft Border" content="tb, default">
+<STYLE>.ListingTitle {
+	
+}
+</STYLE>
+
+<META name=GENERATOR content="MSHTML 9.00.8112.16455"></HEAD>
+<BODY class=chaptoc><!-- page header -->
+<H1 class=PageTitle>Code Listings</H1><PRE>    Written by Brian Goetz and Tim Peierls with assistance from members of
+    JCP JSR-166 Expert Group and released to the public domain, as explained at
+    <A target="_blank" href="http://creativecommons.org/licenses/publicdomain">http://creativecommons.org/licenses/publicdomain</A>
+  </PRE><!-- page body -->
+<P class=ChapTOC>Introduction</P>
+<P class=puzzletitletoc>1.1 <A target="_blank" target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UnsafeSequence.java">Non-thread-safe 
+sequence generator.</A></P>
+<P class=puzzletitletoc>1.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Sequence.java">Thread-safe 
+sequence generator.</A></P>
+<P class=ChapTOC>Thread Safety</P>
+<P class=puzzletitletoc>2.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\StatelessFactorizer.java">A 
+stateless servlet.</A></P>
+<P class=puzzletitletoc>2.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UnsafeCountingFactorizer.java">Servlet 
+that counts requests without the necessary synchronization.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20></P>
+<P class=puzzletitletoc>2.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LazyInitRace.java">Race 
+condition in lazy initialization.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20></P>
+<P class=puzzletitletoc>2.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CountingFactorizer.java">Servlet 
+that counts requests using AtomicLong.<A></P>
+<P class=puzzletitletoc>2.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UnsafeCachingFactorizer.java">Servlet 
+that attempts to cache its last result without adequate atomicity.</A> <IMG 
+alt=(bad) src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" 
+width=20 height=20></P>
+<P class=puzzletitletoc>2.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SynchronizedFactorizer.java">Servlet 
+that caches last result, but with unnacceptably poor concurrency.</A> <IMG 
+alt=(bad) src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" 
+width=20 height=20></P>
+<P class=puzzletitletoc>2.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\NonReentrantDeadlock.java">Code 
+that would deadlock if intrinsic locks were not reentrant.</A></P>
+<P class=puzzletitletoc>2.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CachedFactorizer.java">Servlet 
+that caches its last request and result.</A></P>
+<P class=ChapTOC>Sharing Objects</P>
+<P class=puzzletitletoc>3.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\NoVisibility.java">Sharing 
+variables without synchronization.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>3.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\MutableInteger.java">Non-thread-safe 
+mutable integer holder.</A> </P>
+<P class=puzzletitletoc>3.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SynchronizedInteger.java">Thread-safe 
+mutable integer holder.</A> </P>
+<P class=puzzletitletoc>3.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CountingSheep.java">Counting 
+sheep.</A> </P>
+<P class=puzzletitletoc>3.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Secrets.java">Publishing 
+an object.</A> </P>
+<P class=puzzletitletoc>3.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UnsafeStates.java">Allowing 
+internal mutable state to escape.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>3.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThisEscape.java">Implicitly 
+allowing the this reference to escape.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>3.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SafeListener.java">Using 
+a factory method to prevent the this reference from escaping during 
+construction.</A> </P>
+<P class=puzzletitletoc>3.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Animals.java">Thread 
+confinement of local primitive and reference variables.</A> </P>
+<P class=puzzletitletoc>3.10 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ConnectionDispenser.java">Using 
+ThreadLocal to ensure thread confinement.</A> </P>
+<P class=puzzletitletoc>3.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThreeStooges.java">Immutable 
+class built out of mutable underlying objects.</A> </P>
+<P class=puzzletitletoc>3.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\OneValueCache.java">Immutable 
+holder for caching a number and its factors.</A> </P>
+<P class=puzzletitletoc>3.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\VolatileCachedFactorizer.java">Caching 
+the last result using a volatile reference to an immutable holder object.</A> 
+</P>
+<P class=puzzletitletoc>3.14 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\StuffIntoPublic.java">Publishing 
+an object without adequate synchronization.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>3.15 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Holder.java">Class at 
+risk of failure if not properly published.</A> </P>
+<P class=ChapTOC>Composing Objects</P>
+<P class=puzzletitletoc>4.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Counter.java">Simple 
+thread-safe counter using the Java monitor pattern.</A> </P>
+<P class=puzzletitletoc>4.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PersonSet.java">Using 
+confinement to ensure thread safety.</A> </P>
+<P class=puzzletitletoc>4.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PrivateLock.java">Guarding 
+state with a private lock.</A> </P>
+<P class=puzzletitletoc>4.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\MonitorVehicleTracker.java">Monitor-based 
+vehicle tracker implementation.</A> </P>
+<P class=puzzletitletoc>4.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\MutablePoint.java">Mutable 
+point class similar to java.awt.Point.</A> </P>
+<P class=puzzletitletoc>4.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Point.java">Immutable 
+Point class used by DelegatingVehicleTracker.</A> </P>
+<P class=puzzletitletoc>4.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\DelegatingVehicleTracker.java">Delegating 
+thread safety to a ConcurrentHashMap.</A></P>
+<P class=puzzletitletoc>4.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\DelegatingVehicleTracker.java">Returning 
+a static copy of the location set instead of a 'live' one.</A> </P>
+<P class=puzzletitletoc>4.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\VisualComponent.java">Delegating 
+thread safety to multiple underlying state variables.</A> </P>
+<P class=puzzletitletoc>4.10 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\NumberRange.java">Number 
+range class that does not sufficiently protect its invariants.</A> <IMG 
+alt=(bad) src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" 
+width=20 height=20> </P>
+<P class=puzzletitletoc>4.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SafePoint.java">Thread-safe 
+mutable point class.</A> </P>
+<P class=puzzletitletoc>4.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PublishingVehicleTracker.java">Vehicle 
+tracker that safely publishes underlying state.</A> </P>
+<P class=puzzletitletoc>4.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BetterVector.java">Extending 
+Vector to have a put-if-absent method.</A> </P>
+<P class=puzzletitletoc>4.14 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ListHelpers.java">Non-thread-safe 
+attempt to implement put-if-absent.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20></P>
+<P class=puzzletitletoc>4.15 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ListHelpers.java">Implementing 
+put-if-absent with client-side locking.</A> </P>
+<P class=puzzletitletoc>4.16 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ImprovedList.java">Implementing 
+put-if-absent using composition.</A> </P>
+<P class=ChapTOC>Building Blocks</P>
+<P class=puzzletitletoc>5.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UnsafeVectorHelpers.java">Compound 
+actions on a Vector that may produce confusing results.</A> </P>
+<P class=puzzletitletoc>5.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SafeVectorHelpers.java">Compound 
+actions on Vector using client-side locking.</A> </P>
+<P class=puzzletitletoc>5.3 Iteration that may throw 
+ArrayIndexOutOfBoundsException. (fragment)</P>
+<P class=puzzletitletoc>5.4 Iteration with client-side locking. (fragment)</P>
+<P class=puzzletitletoc>5.5 Iterating a List with an Iterator. (fragment)</P>
+<P class=puzzletitletoc>5.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\HiddenIterator.java">Iteration 
+hidden within string concatenation.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>5.7 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ConcurrentMap.html#method_summary">ConcurrentMap 
+interface.</A> (external link to Javadoc)</P>
+<P class=puzzletitletoc>5.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ProducerConsumer.java">Producer 
+and consumer tasks in a desktop search application.</A> </P>
+<P class=puzzletitletoc>5.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ProducerConsumer.java">Starting 
+the desktop search.</A> </P>
+<P class=puzzletitletoc>5.10 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TaskRunnable.java">Restoring 
+the interrupted status so as not to swallow the interrupt.</A> </P>
+<P class=puzzletitletoc>5.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TestHarness.java">Using 
+CountDownLatch for starting and stopping threads in timing tests.</A></P>
+<P class=puzzletitletoc>5.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Preloader.java">Using 
+FutureTask to preload data that is needed later.</A> </P>
+<P class=puzzletitletoc>5.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LaunderThrowable.java">Coercing 
+an unchecked Throwable to a RuntimeException.</A> </P>
+<P class=puzzletitletoc>5.14 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BoundedHashSet.java">Using 
+Semaphore to bound a collection.</A> </P>
+<P class=puzzletitletoc>5.15 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CellularAutomata.java">Coordinating 
+computation in a cellular automaton with CyclicBarrier.</A> </P>
+<P class=puzzletitletoc>5.16 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Memoizer1.java">Initial 
+cache attempt using HashMap and synchronization.</A> </P>
+<P class=puzzletitletoc>5.17 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Memoizer2.java">Replacing 
+HashMap with ConcurrentHashMap.</A> </P>
+<P class=puzzletitletoc>5.18 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Memoizer2.java">Memoizing 
+wrapper using FutureTask.</A> </P>
+<P class=puzzletitletoc>5.19 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Memoizer.java">Final 
+implementation of Memoizer.</A></P>
+<P class=puzzletitletoc>5.20 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Factorizer.java">Factorizing 
+servlet that caches results using Memoizer.</A> </P>
+<P class=ChapTOC>Task Execution</P>
+<P class=puzzletitletoc>6.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SingleThreadWebServer.java">Sequential 
+web server. </A></P>
+<P class=puzzletitletoc>6.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThreadPerTaskWebServer.java">Web 
+server that starts a new thread for each request.</A> </P>
+<P class=puzzletitletoc>6.3 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Executor.html#method_summary">Executor 
+interface.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>6.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TaskExecutionWebServer.java">Web 
+server using a thread pool.</A> </P>
+<P class=puzzletitletoc>6.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThreadPerTaskExecutor.java">Executor 
+that starts a new thread for each task.</A> </P>
+<P class=puzzletitletoc>6.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\WithinThreadExecutor.java">Executor 
+that executes tasks synchronously in the calling thread.</A> </P>
+<P class=puzzletitletoc>6.7 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ExecutorService.html#method_summary">Lifecycle 
+methods in ExecutorService.</A> (external link to Javadoc, shows <EM>all</EM> 
+methods, not just lifecycle methods) </P>
+<P class=puzzletitletoc>6.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LifecycleWebServer.java">Web 
+server with shutdown support.</A> </P>
+<P class=puzzletitletoc>6.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\OutOfTime.java">Class 
+illustrating confusing Timer behavior.</A> </P>
+<P class=puzzletitletoc>6.10 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SingleThreadRenderer.java">Rendering 
+page elements sequentially.</A> </P>
+<P class=puzzletitletoc>6.11 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Callable.html#method_summary">Callable</A> 
+and <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/Future.html#method_summary">Future</A> 
+interfaces. (external links to Javadoc) </P>
+<P class=puzzletitletoc>6.12 Default implementation of newTaskFor in 
+ThreadPoolExecutor. (See JDK source) </P>
+<P class=puzzletitletoc>6.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\FutureRenderer.java">Waiting 
+for image download with Future.</A> </P>
+<P class=puzzletitletoc>6.14 QueueingFuture class used by 
+ExecutorCompletionService. (See JDK source) </P>
+<P class=puzzletitletoc>6.15 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Renderer.java">Using 
+CompletionService to render page elements as they become available.</A></P>
+<P class=puzzletitletoc>6.16 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\RenderWithTimeBudget.java">Fetching 
+an advertisement with a time budget.</A> </P>
+<P class=puzzletitletoc>6.17 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimeBudget.java">Requesting 
+travel quotes under a time budget.</A> </P>
+<P class=ChapTOC>Cancellation and Shutdown</P>
+<P class=puzzletitletoc>7.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PrimeGenerator.java">Using 
+a volatile field to hold cancellation state.</A> </P>
+<P class=puzzletitletoc>7.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PrimeGenerator.java">Generating 
+a second's worth of prime numbers.</A> </P>
+<P class=puzzletitletoc>7.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BrokenPrimeProducer.java">Unreliable 
+cancellation that can leave producers stuck in a blocking operation.</A> <IMG 
+alt=(bad) src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" 
+width=20 height=20> </P>
+<P class=puzzletitletoc>7.4 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Thread.html#method_summary">Interruption 
+methods in Thread.</A> (external link to Javadoc, shows <EM>all</EM> 
+<TT>Thread</TT> methods, not just interruption-related) </P>
+<P class=puzzletitletoc>7.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PrimeProducer.java">Using 
+interruption for cancellation.</A> </P>
+<P class=puzzletitletoc>7.6 Propagating InterruptedException to callers. 
+(fragment) </P>
+<P class=puzzletitletoc>7.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\NoncancelableTask.java">Noncancelable 
+task that restores interruption before exit.</A> </P>
+<P class=puzzletitletoc>7.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimedRun1.java">Scheduling 
+an interrupt on a borrowed thread.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>7.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimedRun2.java">Interrupting 
+a task in a dedicated thread.</A> </P>
+<P class=puzzletitletoc>7.10 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimedRun.java">Cancelling 
+a task using Future.</A> </P>
+<P class=puzzletitletoc>7.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ReaderThread.java">Encapsulating 
+nonstandard cancellation in a Thread by overriding interrupt.</A> </P>
+<P class=puzzletitletoc>7.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SocketUsingTask.java">Encapsulating 
+nonstandard cancellation in a task with newTaskFor. </A></P>
+<P class=puzzletitletoc>7.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LogWriter.java">Producer-consumer 
+logging service with no shutdown support.</A> </P>
+<P class=puzzletitletoc>7.14 Unreliable way to add shutdown support to the 
+logging service. (fragment) </P>
+<P class=puzzletitletoc>7.15 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LogService.java">Adding 
+reliable cancellation to LogWriter.</A> </P>
+<P class=puzzletitletoc>7.16 Logging service that uses an ExecutorService. </P>
+<P class=puzzletitletoc>7.17 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\IndexingService.java">Shutdown 
+with poison pill.</A> </P>
+<P class=puzzletitletoc>7.18 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\IndexingService.java">Producer 
+thread for IndexingService.</A> </P>
+<P class=puzzletitletoc>7.19 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\IndexingService.java">Consumer 
+thread for IndexingService.</A> </P>
+<P class=puzzletitletoc>7.20 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CheckForMail.java">Using 
+a private Executor whose lifetime is bounded by a method call.</A> </P>
+<P class=puzzletitletoc>7.21 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TrackingExecutor.java">ExecutorService 
+that keeps track of cancelled tasks after shutdown.</A> </P>
+<P class=puzzletitletoc>7.22 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\WebCrawler.java">Using 
+TrackingExecutorService to save unfinished tasks for later execution.</A> </P>
+<P class=puzzletitletoc>7.23 Typical thread-pool worker thread structure. 
+(fragment) </P>
+<P class=puzzletitletoc>7.24 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/Thread.UncaughtExceptionHandler.html#method_summary">UncaughtExceptionHandler 
+interface.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>7.25 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UEHLogger.java">UncaughtExceptionHandler 
+that logs the exception.</A> </P>
+<P class=puzzletitletoc>7.26 Registering a shutdown hook to stop the logging 
+service. (fragment) </P>
+<P class=ChapTOC>Applying Thread Pools</P>
+<P class=puzzletitletoc>8.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThreadDeadlock.java">Task 
+that deadlocks in a single-threaded Executor.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>8.2 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ThreadPoolExecutor.html#ThreadPoolExecutor(int,%20int,%20long,%20java.util.concurrent.TimeUnit,%20java.util.concurrent.BlockingQueue,%20java.util.concurrent.ThreadFactory,%20java.util.concurrent.RejectedExecutionHandler)">General 
+constructor for ThreadPoolExecutor.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>8.3 Creating a fixed-sized thread pool with a bounded 
+queue and the caller-runs saturation policy. (fragment) </P>
+<P class=puzzletitletoc>8.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BoundedExecutor.java">Using 
+a Semaphore to throttle task submission.</A> </P>
+<P class=puzzletitletoc>8.5 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/ThreadFactory.html#method_summary">ThreadFactory 
+interface.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>8.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\MyThreadFactory.java">Custom 
+thread factory.</A> </P>
+<P class=puzzletitletoc>8.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\MyAppThread.java">Custom 
+thread base class.</A> </P>
+<P class=puzzletitletoc>8.8 Modifying an Executor created with the standard 
+factories. (fragment) </P>
+<P class=puzzletitletoc>8.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimingThreadPool.java">Thread 
+pool extended with logging and timing.</A> </P>
+<P class=puzzletitletoc>8.10 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TransformingSequential.java">Transforming 
+sequential execution into parallel execution.</A> </P>
+<P class=puzzletitletoc>8.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TransformingSequential.java">Transforming 
+sequential tail-recursion into parallelized recursion.</A> </P>
+<P class=puzzletitletoc>8.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TransformingSequential.java">Waiting 
+for results to be calculated in parallel.</A> </P>
+<P class=puzzletitletoc>8.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\Puzzle.java">Abstraction 
+for puzzles like the 'sliding blocks puzzle'.</A> </P>
+<P class=puzzletitletoc>8.14 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PuzzleNode.java">Link 
+node for the puzzle solver framework.</A> </P>
+<P class=puzzletitletoc>8.15 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SequentialPuzzleSolver.java">Sequential 
+puzzle solver.</A> </P>
+<P class=puzzletitletoc>8.16 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ConcurrentPuzzleSolver.java">Concurrent 
+version of puzzle solver.</A> </P>
+<P class=puzzletitletoc>8.17 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ValueLatch.java">Result-bearing 
+latch used by ConcurrentPuzzleSolver.</A> </P>
+<P class=puzzletitletoc>8.18 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PuzzleSolver.java">Solver 
+that recognizes when no solution exists.</A> </P>
+<P class=ChapTOC>GUI Applications</P>
+<P class=puzzletitletoc>9.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SwingUtilities.java">Implementing 
+SwingUtilities using an Executor.</A> </P>
+<P class=puzzletitletoc>9.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\GuiExecutor.java">Executor 
+built atop SwingUtilities.</A> </P>
+<P class=puzzletitletoc>9.3 Simple event listener. (fragment) </P>
+<P class=puzzletitletoc>9.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ListenerExamples.java">Binding 
+a long-running task to a visual component.</A> </P>
+<P class=puzzletitletoc>9.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ListenerExamples.java">Long-running 
+task with user feedback.</A> </P>
+<P class=puzzletitletoc>9.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ListenerExamples.java">Cancelling 
+a long-running task.</A> </P>
+<P class=puzzletitletoc>9.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BackgroundTask.java">Background 
+task class supporting cancellation, completion notification, and progress 
+notification.</A> </P>
+<P class=puzzletitletoc>9.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ListenerExamples.java">Initiating 
+a long-running, cancellable task with BackgroundTask.</A> </P>
+<P class=ChapTOC>Avoiding Liveness Hazards</P>
+<P class=puzzletitletoc>10.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LeftRightDeadlock.java">Simple 
+lock-ordering deadlock.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>10.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\DynamicOrderDeadlock.java">Dynamic 
+lock-ordering deadlock.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>10.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\InduceLockOrder.java">Inducing 
+a lock ordering to avoid deadlock.</A> </P>
+<P class=puzzletitletoc>10.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\DemonstrateDeadlock.java">Driver 
+loop that induces deadlock under typical conditions.</A> </P>
+<P class=puzzletitletoc>10.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CooperatingDeadlock.java">Lock-ordering 
+deadlock between cooperating objects.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>10.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CooperatingNoDeadlock.java">Using 
+open calls to avoiding deadlock between cooperating objects.</A> </P>
+<P class=puzzletitletoc>10.7 Portion of thread dump after deadlock. (not a code 
+listing) </P>
+<P class=ChapTOC>Performance and Scalability</P>
+<P class=puzzletitletoc>11.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\WorkerThread.java">Serialized 
+access to a task queue.</A> </P>
+<P class=puzzletitletoc>11.2 Synchronization that has no effect. <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> (fragment) </P>
+<P class=puzzletitletoc>11.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThreeStooges.java">Candidate 
+for lock elision.</A> </P>
+<P class=puzzletitletoc>11.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\AttributeStore.java">Holding 
+a lock longer than necessary.</A> </P>
+<P class=puzzletitletoc>11.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BetterAttributeStore.java">Reducing 
+lock duration.</A> </P>
+<P class=puzzletitletoc>11.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ServerStatusBeforeSplit.java">Candidate 
+for lock splitting.</A> </P>
+<P class=puzzletitletoc>11.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ServerStatusAfterSplit.java">ServerStatus 
+refactored to use split locks.</A> </P>
+<P class=puzzletitletoc>11.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\StripedMap.java">Hash-based 
+map using lock striping.</A> </P>
+<P class=ChapTOC>Testing Concurrent Programs</P>
+<P class=puzzletitletoc>12.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SemaphoreBoundedBuffer.java">Bounded 
+buffer using Semaphore.</A> </P>
+<P class=puzzletitletoc>12.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TestBoundedBuffer.java">Basic 
+unit tests for BoundedBuffer.</A> </P>
+<P class=puzzletitletoc>12.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TestBoundedBuffer.java">Testing 
+blocking and responsiveness to interruption.</A> </P>
+<P class=puzzletitletoc>12.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\XorShift.java">Medium-quality 
+random number generator suitable for testing.</A> </P>
+<P class=puzzletitletoc>12.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PutTakeTest.java">Producer-consumer 
+test program for BoundedBuffer.</A> </P>
+<P class=puzzletitletoc>12.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PutTakeTest.java">Producer 
+and consumer classes used in PutTakeTest.</A> </P>
+<P class=puzzletitletoc>12.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TestBoundedBuffer.java">Testing 
+for resource leaks.</A> </P>
+<P class=puzzletitletoc>12.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TestThreadPool.java">Thread 
+factory for testing ThreadPoolExecutor.</A> </P>
+<P class=puzzletitletoc>12.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TestThreadPool.java">Test 
+method to verify thread pool expansion.</A> </P>
+<P class=puzzletitletoc>12.10 Using Thread.yield to generate more interleavings. 
+(fragment) </P>
+<P class=puzzletitletoc>12.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BarrierTimer.java">Barrier-based 
+timer.</A> </P>
+<P class=puzzletitletoc>12.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimedPutTakeTest.java">Testing 
+with a barrier-based timer.</A> </P>
+<P class=puzzletitletoc>12.13 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimedPutTakeTest.java">Driver 
+program for TimedPutTakeTest.</A> </P>
+<P class=ChapTOC>Explicit Locks</P>
+<P class=puzzletitletoc>13.1 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/Lock.html#method_summary">Lock 
+interface.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>13.2 Guarding object state using ReentrantLock. 
+(fragment) </P>
+<P class=puzzletitletoc>13.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\DeadlockAvoidance.java">Avoiding 
+lock-ordering deadlock using try Lock.</A> </P>
+<P class=puzzletitletoc>13.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\TimedLocking.java">Locking 
+with a time budget.</A> </P>
+<P class=puzzletitletoc>13.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\InterruptibleLocking.java">Interruptible 
+lock acquisition.</A> </P>
+<P class=puzzletitletoc>13.6 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReadWriteLock.html#method_summary">ReadWriteLock 
+interface.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>13.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ReadWriteMap.java">Wrapping 
+a Map with a read-write lock.</A> </P>
+<P class=ChapTOC>Building Custom Synchronizers</P>
+<P class=puzzletitletoc>14.1 Structure of blocking state-dependent actions. 
+(fragment) </P>
+<P class=puzzletitletoc>14.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BaseBoundedBuffer.java">Base 
+class for bounded buffer implementations.</A> </P>
+<P class=puzzletitletoc>14.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\GrumpyBoundedBuffer.java">Bounded 
+buffer that balks when preconditions are not met.</A> </P>
+<P class=puzzletitletoc>14.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\GrumpyBoundedBuffer.java">Client 
+logic for calling GrumpyBoundedBuffer.</A> </P>
+<P class=puzzletitletoc>14.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SleepyBoundedBuffer.java">Bounded 
+buffer using crude blocking.</A> </P>
+<P class=puzzletitletoc>14.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BoundedBuffer.java">Bounded 
+buffer using condition queues.</A> </P>
+<P class=puzzletitletoc>14.7 Canonical form for state-dependent methods. 
+(fragment) </P>
+<P class=puzzletitletoc>14.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\BoundedBuffer.java">Using 
+conditional notification in BoundedBuffer.put.</A> </P>
+<P class=puzzletitletoc>14.9 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ThreadGate.java">Recloseable 
+gate using wait and notifyAll.</A> </P>
+<P class=puzzletitletoc>14.10 <A target="_blank" 
+href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/Condition.html#method_summary">Condition 
+interface.</A> (external link to Javadoc) </P>
+<P class=puzzletitletoc>14.11 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ConditionBoundedBuffer.java">Bounded 
+buffer using explicit condition variables.</A> </P>
+<P class=puzzletitletoc>14.12 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SemaphoreOnLock.java">Counting 
+semaphore implemented using Lock.</A> </P>
+<P class=puzzletitletoc>14.13 Canonical forms for acquisition and release in 
+AQS. (fragment) </P>
+<P class=puzzletitletoc>14.14 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\OneShotLatch.java">Binary 
+latch using AbstractQueuedSynchronizer.</A> </P>
+<P class=puzzletitletoc>14.15 tryAcquire implementation from 
+nonfairReentrantLock. (See JDK source) </P>
+<P class=puzzletitletoc>14.16 tryAcquireShared and tryReleaseShared from 
+Semaphore. (See JDK source) </P>
+<P class=ChapTOC>Atomic Variables and Nonblocking Synchronization</P>
+<P class=puzzletitletoc>15.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SimulatedCAS.java">Simulated 
+CAS operation.</A> </P>
+<P class=puzzletitletoc>15.2 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CasCounter.java">Nonblocking 
+counter using CAS.</A> </P>
+<P class=puzzletitletoc>15.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\CasNumberRange.java">Preserving 
+multivariable invariants using CAS.</A> </P>
+<P class=puzzletitletoc>15.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ReentrantLockPseudoRandom.java">Random 
+number generator using ReentrantLock.</A> </P>
+<P class=puzzletitletoc>15.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\AtomicPseudoRandom.java">Random 
+number generator using AtomicInteger.</A> </P>
+<P class=puzzletitletoc>15.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ConcurrentStack.java">Nonblocking 
+stack using Treiber's algorithm.</A> </P>
+<P class=puzzletitletoc>15.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\LinkedQueue.java">Insertion 
+in the Michael-Scott nonblocking queue algorithm.</A> </P>
+<P class=puzzletitletoc>15.8 Using atomic field updaters in 
+ConcurrentLinkedQueue. (fragment) </P>
+<P class=ChapTOC>The Java Memory Model</P>
+<P class=puzzletitletoc>16.1 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\PossibleReordering.java">Insufficiently 
+synchronized program that can have surprising results.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>16.2 Inner class of FutureTask illustrating 
+synchronization piggybacking. (See JDK source) </P>
+<P class=puzzletitletoc>16.3 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\UnsafeLazyInitialization.java">Unsafe 
+lazy initialization.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>16.4 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SafeLazyInitialization.java">Thread-safe 
+lazy initialization.</A> </P>
+<P class=puzzletitletoc>16.5 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\EagerInitialization.java">Eager 
+initialization.</A> </P>
+<P class=puzzletitletoc>16.6 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\ResourceFactory.java">Lazy 
+initialization holder class idiom.</A> </P>
+<P class=puzzletitletoc>16.7 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\DoubleCheckedLocking.java">Double-checked-locking 
+antipattern.</A> <IMG alt=(bad) 
+src="http://www.javaconcurrencyinpractice.com/images/mryuk.gif" width=20 
+height=20> </P>
+<P class=puzzletitletoc>16.8 <A target="_blank" 
+href="D:\workspace\EmailProject\src\main\java\concurrencyinpractice\net\jcip\examples\SafeStates.java">Initialization 
+safety for immutable objects.</A> </P></BODY></HTML>

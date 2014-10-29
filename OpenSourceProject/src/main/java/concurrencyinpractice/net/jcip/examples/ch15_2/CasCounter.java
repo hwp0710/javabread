@@ -1,0 +1,28 @@
+package concurrencyinpractice.net.jcip.examples.ch15_2;
+
+import concurrencyinpractice.net.jcip.annotations.ThreadSafe;
+import concurrencyinpractice.net.jcip.examples.ch15_1.SimulatedCAS;
+
+/**
+ * CasCounter
+ * <p/>
+ * Nonblocking counter using CAS
+ *
+ * @author Brian Goetz and Tim Peierls
+ */
+@ThreadSafe
+public class CasCounter {
+    private SimulatedCAS value;
+
+    public int getValue() {
+        return value.get();
+    }
+
+    public int increment() {
+        int v;
+        do {
+            v = value.get();
+        } while (v != value.compareAndSwap(v, v + 1));
+        return v + 1;
+    }
+}

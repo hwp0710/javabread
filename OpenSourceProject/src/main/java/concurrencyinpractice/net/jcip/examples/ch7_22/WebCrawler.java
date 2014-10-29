@@ -1,0 +1,117 @@
+package concurrencyinpractice.net.jcip.examples.ch7_22;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
+import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import concurrencyinpractice.net.jcip.examples.ch7_21.TrackingExecutor;
+
+/**
+ * WebCrawler
+ * <p/>
+ * Using TrackingExecutorService to save unfinished tasks for later execution
+ * 
+ * @author Brian Goetz and Tim Peierls
+ */
+public abstract class WebCrawler {
+	private volatile TrackingExecutor exec;
+	// @GuardedBy("this")
+	private final Set<URL> urlsToCrawl = new HashSet<URL>();
+
+	private final ConcurrentMap<URL, Boolean> seen = new ConcurrentHashMap<URL, Boolean>();
+	private static final long TIMEOUT = 500;
+	private static final TimeUnit UNIT = MILLISECONDS;
+
+	public WebCrawler(URL startUrl) {
+		urlsToCrawl.add(startUrl);
+	}
+
+	public synchronized void start() {
+		exec = new TrackingExecutor(Executors.newCachedThreadPool());
+		for (URL url : urlsToCrawl)
+			submitCrawlTask(url);
+		urlsToCrawl.clear();
+	}
+
+	public synchronized void stop() throws InterruptedException {
+		try {
+			saveUncrawled(exec.shutdownNow());
+			if (exec.awaitTermination(TIMEOUT, UNIT))
+				saveUncrawled(exec.getCancelledTasks());
+			System.out.println("task to do:" + urlsToCrawl);
+			System.out.println("task have bean done:" + seen);
+
+		} finally {
+			exec = null;
+		}
+	}
+
+	protected abstract List<URL> processPage(URL url);
+
+	private void saveUncrawled(List<Runnable> uncrawled) {
+		for (Runnable task : uncrawled)
+			urlsToCrawl.add(((CrawlTask) task).getPage());
+	}
+
+	private void submitCrawlTask(URL u) {
+		exec.execute(new CrawlTask(u));
+	}
+
+	private class CrawlTask implements Runnable {
+		private final URL url;
+
+		CrawlTask(URL url) {
+			this.url = url;
+		}
+
+		private int count = 1;
+
+		boolean alreadyCrawled() {
+			return seen.putIfAbsent(url, true) != null;
+		}
+
+		void markUncrawled() {
+			seen.remove(url);
+			System.out.printf("marking %s uncrawled%n", url);
+		}
+
+		public void run() {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+			}
+			for (URL link : processPage(url)) {
+				System.out.println("process url : " + url);
+				alreadyCrawled();
+				if (Thread.currentThread().isInterrupted()) {
+					markUncrawled();
+					return;
+				}
+				submitCrawlTask(link);
+			}
+		}
+
+		public URL getPage() {
+			return url;
+		}
+	}
+
+	static class URL {
+		String url;
+		public URL(String url) {
+			this.url = url;
+		}
+		@Override
+		public String toString() {
+			return url;
+		}
+
+	}
+}
