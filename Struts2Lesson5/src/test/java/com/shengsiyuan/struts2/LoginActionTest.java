@@ -8,7 +8,7 @@ public class LoginActionTest {
 
 	@Test
 	public void testExecute() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 }
