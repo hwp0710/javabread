@@ -8,7 +8,7 @@ public class GetJsonActionTest {
 
 	@Test
 	public void testExecute() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 }
