@@ -3,8 +3,7 @@ package net.dp.state.gumballstatewinner;
 public class GumballMachineTestDrive {
 
 	public static void main(String[] args) {
-		GumballMachine gumballMachine = 
-			new GumballMachine(10);
+		GumballMachine gumballMachine = new GumballMachine(10);
 
 		System.out.println(gumballMachine);
 
