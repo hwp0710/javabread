@@ -1,0 +1,4 @@
+
+1.mvn mybatis-generator:generate
+
+2.find mapper package and add @Repository to *Mapper object.

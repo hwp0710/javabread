@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-config.dtd">
+<configuration>
+    <!-- 鍏ㄥ眬鍒悕璁剧疆锛屽湪鏄犲皠鏂囦欢涓彧闇�鍐欏埆鍚嶏紝鑰屼笉蹇呭啓鍑烘暣涓被璺緞
+    <typeAliases>
+        <typeAlias alias="" type="" />
+    </typeAliases>
+    -->
+
+    <!-- 闈炴敞瑙ｇ殑sql鏄犲皠鏂囦欢閰嶇疆锛屽鏋滀娇鐢╩ybatis娉ㄨВ锛岃mapper鏃犻渶閰嶇疆锛屼絾鏄鏋渕ybatis娉ㄨВ涓寘鍚獲resultMap娉ㄨВ锛屽垯mapper蹇呴』閰嶇疆锛岀粰resultMap娉ㄨВ浣跨敤-->
+    <mappers>
+        <mapper resource="config/mybatis/TUserMapper.xml" />
+    </mappers>
+
+</configuration>
