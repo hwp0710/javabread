@@ -8,62 +8,62 @@ import javax.swing.*;
 class SwingUI extends JFrame implements ActionListener
 {
 
-   JLabel text, clicked;
-   JButton button, clickButton;
-   JPanel panel;
-   private boolean m_clickMeMode = true;
+    JLabel text, clicked;
+    JButton button, clickButton;
+    JPanel panel;
+    private boolean m_clickMeMode = true;
 
-   /**
-    * @label Uses
-    * @directed 
-    */
-   private WindowAdapter lnkWindowAdapter;
+    /**
+     * @label Uses
+     * @directed
+     */
+    private WindowAdapter lnkWindowAdapter;
 
-   SwingUI()
-   {
-     text = new JLabel("ÎÒºÜ¸ßĞË£¡");
-     button = new JButton("ÀíÎÒ");
-     button.addActionListener(this);
+    SwingUI()
+    {
+        text = new JLabel("æˆ‘å¾ˆé«˜å…´ï¼");
+        button = new JButton("ç†æˆ‘");
+        button.addActionListener(this);
 
-     panel = new JPanel();
-     panel.setLayout(new BorderLayout());
-     panel.setBackground(Color.white);
-     getContentPane().add(panel);
-     panel.add(BorderLayout.CENTER, text);
-     panel.add(BorderLayout.SOUTH, button);
-   }
+        panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setBackground(Color.white);
+        getContentPane().add(panel);
+        panel.add(BorderLayout.CENTER, text);
+        panel.add(BorderLayout.SOUTH, button);
+    }
 
-   public void actionPerformed(ActionEvent event)
-   {
+    public void actionPerformed(ActionEvent event)
+    {
         Object source = event.getSource();
         if (m_clickMeMode)
         {
-          text.setText("ÎÒºÜ·³£¡");
-          button.setText("±ğÀíÎÒ");
-          m_clickMeMode = false;
+            text.setText("æˆ‘å¾ˆçƒ¦ï¼");
+            button.setText("åˆ«ç†æˆ‘");
+            m_clickMeMode = false;
         }
         else
         {
-          text.setText("ÎÒºÜ¸ßĞË£¡");
-          button.setText("ÀíÎÒ");
-          m_clickMeMode = true;
+            text.setText("æˆ‘å¾ˆé«˜å…´ï¼");
+            button.setText("ç†æˆ‘");
+            m_clickMeMode = true;
         }
-   }
+    }
 
-   public static void main(String[] args)
-   {
-     SwingUI frame = new SwingUI();
-     frame.setTitle("ÎÒ");
-     WindowListener listener = new WindowAdapter()
-     {
-       public void windowClosing(WindowEvent e)
-       {
-         System.exit(0);
-       }
-     };
+    public static void main(String[] args)
+    {
+        SwingUI frame = new SwingUI();
+        frame.setTitle("æˆ‘");
+        WindowListener listener = new WindowAdapter()
+        {
+            public void windowClosing(WindowEvent e)
+            {
+                System.exit(0);
+            }
+        };
 
-     frame.addWindowListener(listener);
-     frame.pack();
-     frame.setVisible(true);
-  }
+        frame.addWindowListener(listener);
+        frame.pack();
+        frame.setVisible(true);
+    }
 }

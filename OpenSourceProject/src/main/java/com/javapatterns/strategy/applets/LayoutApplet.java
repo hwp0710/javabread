@@ -5,14 +5,14 @@ import java.applet.Applet;
 
 public class LayoutApplet extends Applet
 {
-     Button button1, button2, button3;
-     public void init()
-     {
-         button1 = new Button("ÎÒ °® Äã");
-         button2 = new Button("ÎÒ ²» °® Äã");
-         button3 = new Button("ÎÒ ºŞ Äã");
-         add(button1);
-         add(button2);
-         add(button3);
-     }
+    Button button1, button2, button3;
+    public void init()
+    {
+        button1 = new Button("æˆ‘ çˆ± ä½ ");
+        button2 = new Button("æˆ‘ ä¸ çˆ± ä½ ");
+        button3 = new Button("æˆ‘ æ¨ ä½ ");
+        add(button1);
+        add(button2);
+        add(button3);
+    }
 }

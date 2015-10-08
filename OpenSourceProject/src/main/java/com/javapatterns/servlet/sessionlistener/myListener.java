@@ -7,24 +7,24 @@ import javax.servlet.http.HttpSessionBindingEvent;
 public final class myListener implements HttpSessionAttributeListener
 {
 
-    /** This method is called when an attribute 
-     *¡¡is added to a session.
+    /** This method is called when an attribute
+     *ã€€is added to a session.
      */
-    public void attributeAdded(HttpSessionBindingEvent sbe) 
+    public void attributeAdded(HttpSessionBindingEvent sbe)
     {
     }
 
     /** This method is called when an attribute
      * is removed from a session.
      */
-    public void attributeRemoved(HttpSessionBindingEvent sbe) 
+    public void attributeRemoved(HttpSessionBindingEvent sbe)
     {
     }
 
     /** This method is invoked when an attibute
      * is replaced in a session.
      */
-    public void attributeReplaced(HttpSessionBindingEvent sbe) 
+    public void attributeReplaced(HttpSessionBindingEvent sbe)
     {
     }
 }

@@ -4,28 +4,28 @@ import java.io.*;
 
 /** This class implements a subset of the UNIX tool grep and
  ** demonstrates the use of the GrepInputStream class.
- ** It prints the filename, linenumbers and lines of the file that 
+ ** It prints the filename, linenumbers and lines of the file that
  ** contains a specified substring (no regexp)
  ** @see GrepInputStream
  ** @author Ulrik Schroeder
  ** @version Joop97-Demo
  **/
 public class Grep {
-	static GrepReader g;		// own FilterReader definition
+    static GrepReader g;		// own FilterReader definition
 
     private static GrepView gv = new GrepView();
-	/** reads substring and files to be looked through from commandline.
-	 ** Unfortunately DOS shell does not expand wildcards when calling Grep.
-	 ** @param args command line arguments: 1 substring, 2 .. n Filenames
-	 ** @see <{DataInputStream}>
-	 ** @see GrepInputStream 
-	 ** @see GrepInputStream#GrepInputStream 
-	 ** @see GrepInputStream#line 
-	 ** @see GrepInputStream#lineNo 
-	 **/
-	public static void main( String[] args  )
+    /** reads substring and files to be looked through from commandline.
+     ** Unfortunately DOS shell does not expand wildcards when calling Grep.
+     ** @param args command line arguments: 1 substring, 2 .. n Filenames
+     ** @see <{DataInputStream}>
+     ** @see GrepInputStream
+     ** @see GrepInputStream#GrepInputStream
+     ** @see GrepInputStream#line
+     ** @see GrepInputStream#lineNo
+     **/
+    public static void main( String[] args  )
     {
-	
+
         if ( args.length <= 1 )
         {
             gv.println("Usage: java Grep <substring> <filenames>");
@@ -33,26 +33,26 @@ public class Grep {
             gv.println("       <filenames> files to be searched in");
             System.exit( 1 );
         }
-        
-		String line;
+
+        String line;
         try
         {
-            gv.println( "\nGrep: 搜索 " + args[0] + " 文件 " + args[1] );
-            gv.println( "文件行号\t\t 下面的行里含有所搜索的字符串\n" );
+            gv.println( "\nGrep: 鎼滅储 " + args[0] + " 鏂囦欢 " + args[1] );
+            gv.println( "鏂囦欢琛屽彿\t\t 涓嬮潰鐨勮閲屽惈鏈夋墍鎼滅储鐨勫瓧绗︿覆\n" );
 //  		gv.println( "\n--> Grep: searching " + args[ 0 ] + " in " + args[ i ] + " <----------" );
 //			gv.println( "File:Line:\t Line containing substring\n" );
-			g = new GrepReader( new FileReader( args[1] ), args[0] );
-			for( ; ; )
-               {
-				line = g.readLine( );
-				if (line == null) break;
-				gv.println( args[1] + g.lineNo( ) + ":\t" + line );
-			} // loop through lines of file
-			g.close( );
+            g = new GrepReader( new FileReader( args[1] ), args[0] );
+            for( ; ; )
+            {
+                line = g.readLine( );
+                if (line == null) break;
+                gv.println( args[1] + g.lineNo( ) + ":\t" + line );
+            } // loop through lines of file
+            g.close( );
         } // try
-		catch ( IOException e ) { 
-			gv.println( e.getMessage() );
-		} // catch IOException 
+        catch ( IOException e ) {
+            gv.println( e.getMessage() );
+        } // catch IOException
     }
 
 }
