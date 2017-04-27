@@ -14,3 +14,15 @@
 /src/main/webapp/WEB-INF/classes/*
 /src/main/webapp/userfiles/*
 /target/
+
+# Mac
+.DS_Store
+
+# IDEA
+.idea/*
+.idea/
+*/target/
+*.class
+.settings
+*.classpath
+rebel.xml
