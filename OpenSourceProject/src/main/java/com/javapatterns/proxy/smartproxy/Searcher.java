@@ -1,7 +1,6 @@
 package com.javapatterns.proxy.smartproxy;
 
-public interface Searcher
-{
+public interface Searcher {
     String doSearch(String userId, String searchType);
 }
 
